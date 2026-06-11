@@ -42,8 +42,8 @@ func cls() {
 func header() {
 	fmt.Println()
 	fmt.Println("                ╔══════════════════════════════════════════════════════════════════════════╗")
-	fmt.Println("                ║                       ▶▶  S u b s c r i b e W i s e  ◀◀                 ║")
-	fmt.Println("                ║                     💡 Kelola langganan, hemat pengeluaran               ║")
+	fmt.Println("                ║                        ▶▶  S u b s c r i b e W i s e  ◀◀                  ║")
+	fmt.Println("                ║                      💡 Kelola langganan, hemat pengeluaran               ║")
 	fmt.Println("                ╚══════════════════════════════════════════════════════════════════════════╝")
 	fmt.Println()
 }
@@ -53,7 +53,7 @@ func mainMenu(choice *int, counter *int) {
 	fmt.Println()
 	fmt.Println("                ┌─────────────────────────────────────────────────────────────┐")
 	fmt.Println("                │         ▶▶ Selamat Datang di SubscribeWise! ◀◀              │")
-	fmt.Println("                │             💡 Kelola langganan, hemat pengeluaran           │")
+	fmt.Println("                │              💡 Kelola langganan, hemat pengeluaran           │")
 	fmt.Println("                ├─────────────────────────────────────────────────────────────┤")
 	fmt.Println("                │                  °❀⋆.ೃ࿔*:･   MAIN MENU   °❀⋆.ೃ࿔*:･          │")
 	fmt.Println("                └─────────────────────────────────────────────────────────────┘")
@@ -78,19 +78,21 @@ func displaySubs(A subData, n int, status *string) {
 		fmt.Println("├────┼────────────────────────────┼──────────────┼────────────┼──────────────┼─────────────────────┼──────────────┤")
 		for i := 0; i < n; i++ {
 			A[i].no = i + 1
-			fmt.Printf("│ %-2d │ %-26s │ %-12s │ Rp%-8d│ %-12s │ %02d/%02d/%04d          │ %-12s │\n",
+			fmt.Printf("│ %-2d │ %-26s │ %-12s │ Rp%-8d│ %-12s │ %02d/%02d/%04d           │ %-12s │\n",
 				A[i].no, A[i].name, A[i].category, A[i].cost, A[i].method,
 				A[i].dueDate.day, A[i].dueDate.month, A[i].dueDate.year, A[i].status)
 		}
 		fmt.Println("└────┴────────────────────────────┴──────────────┴────────────┴──────────────┴─────────────────────┴──────────────┘")
 	} else {
 		fmt.Println("┌──────────────────────────────────────────────────────────────────────────────────────────────────────────┐")
-		fmt.Println("│                              ⌕  Belum ada langganan                                                       │")
+		fmt.Println("│                               ⌕  Belum ada langganan                                                     │")
 		fmt.Println("└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘")
 	}
 	fmt.Println()
-	fmt.Printf("                %v\n", *status)
-	*status = ""
+	if *status != "" {
+		fmt.Printf("                %v\n", *status)
+		*status = ""
+	}
 }
 
 func subMenu(choice *int, A subData, n *int, status *string, budget *int) {
@@ -109,8 +111,10 @@ func subMenu(choice *int, A subData, n *int, status *string, budget *int) {
 
 	if *n == 0 && (*choice >= 2 && *choice <= 7) {
 		*status = "Belum ada data untuk melakukan perintah."
+		*choice = 0
 	} else if *choice < 1 || *choice > 8 {
 		*status = "Pilihan tidak valid."
+		*choice = 0
 	}
 }
 
@@ -121,6 +125,7 @@ func dateToDays(d dueDate) int {
 func addSubscription(A *subData, n *int, status *string) {
 	i := *n
 	var name string
+	var dummy string
 	displaySubs(*A, *n, status)
 	fmt.Println("                Format: Nama Kategori Biaya Metode Hari/Bulan/Tahun")
 	fmt.Println("                Contoh: Netflix Hiburan 89000 KartuKredit 15/06/2026")
@@ -148,6 +153,8 @@ func addSubscription(A *subData, n *int, status *string) {
 		*n = i
 		*status = "Langganan berhasil ditambahkan!"
 	}
+	// Bersihkan buffer enter sisa input data terakhir
+	fmt.Scanln(&dummy)
 }
 
 func findIndexByNo(A subData, n int, target int) int {
@@ -266,6 +273,7 @@ func binarySearchByName(A subData, n int, target string) int {
 
 func searchMenu(A *subData, n *int, status *string) {
 	var method, keyword string
+	var wait string
 	displaySubs(*A, *n, status)
 	fmt.Println("                [1] Sequential Search (nama mengandung kata kunci)")
 	fmt.Println("                [2] Binary Search (nama persis)")
@@ -278,11 +286,14 @@ func searchMenu(A *subData, n *int, status *string) {
 		fmt.Scan(&keyword)
 		result := sequentialSearchByName(*A, *n, keyword)
 		count := 0
-		for result[count].name != "" {
+		for count < NMAX && result[count].name != "" {
 			count++
 		}
 		if count > 0 {
 			displaySubs(result, count, status)
+			fmt.Println()
+			fmt.Print("                Ketik angka/huruf bebas + Enter untuk kembali ke menu: ")
+			fmt.Scan(&wait)
 		} else {
 			*status = "Tidak ditemukan."
 		}
@@ -294,7 +305,14 @@ func searchMenu(A *subData, n *int, status *string) {
 		fmt.Scan(&keyword)
 		idx := binarySearchByName(sorted, *n, keyword)
 		if idx != -1 {
-			fmt.Printf("                ✅ Ditemukan: %s (Rp%d/bulan)\n", sorted[idx].name, sorted[idx].cost)
+			cls()
+			header()
+			fmt.Println("┌──────────────────────────────────────────────────────────────────────────────────────────────────────────┐")
+			fmt.Printf("│               ✅ Ditemukan: %-26s (Rp%-8d/bulan)                                      │\n", sorted[idx].name, sorted[idx].cost)
+			fmt.Println("└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘")
+			fmt.Println()
+			fmt.Print("                Ketik angka/huruf bebas + Enter untuk kembali ke menu: ")
+			fmt.Scan(&wait)
 		} else {
 			*status = "Tidak ditemukan."
 		}
@@ -362,10 +380,11 @@ func sortMenu(A *subData, n *int, status *string) {
 func remindDue(A subData, n int) {
 	now := time.Now()
 	todayDays := now.Year()*365 + int(now.Month())*30 + now.Day()
+	var wait string
 	cls()
 	fmt.Println()
 	fmt.Println("                ╔══════════════════════════════════════════════════════════════╗")
-	fmt.Println("                ║              ⏰ PENGINGAT JATUH TEMPO (7 HARI)              ║")
+	fmt.Println("                ║                ⏰ PENGINGAT JATUH TEMPO (7 HARI)              ║")
 	fmt.Println("                ╚══════════════════════════════════════════════════════════════╝")
 	fmt.Println()
 	found := false
@@ -384,12 +403,13 @@ func remindDue(A subData, n int) {
 		fmt.Println("                ✅ Tidak ada yang jatuh tempo dalam 7 hari.")
 	}
 	fmt.Println()
-	fmt.Print("                Tekan Enter...")
-	fmt.Scanln()
+	fmt.Print("                Ketik angka/huruf bebas + Enter untuk kembali ke menu: ")
+	fmt.Scan(&wait)
 }
 
 func totalAndRecommend(A subData, n int, budget *int) {
 	var total int
+	var wait string
 	for i := 0; i < n; i++ {
 		if A[i].status == "Active" {
 			total += A[i].cost
@@ -398,7 +418,7 @@ func totalAndRecommend(A subData, n int, budget *int) {
 	cls()
 	fmt.Println()
 	fmt.Println("                ╔══════════════════════════════════════════════════════════════╗")
-	fmt.Println("                ║            💰 TOTAL PENGELUARAN & REKOMENDASI               ║")
+	fmt.Println("                ║                💰 TOTAL PENGELUARAN & REKOMENDASI             ║")
 	fmt.Println("                ╚══════════════════════════════════════════════════════════════╝")
 	fmt.Println()
 	fmt.Printf("                Total pengeluaran aktif: Rp%d/bulan\n", total)
@@ -435,8 +455,8 @@ func totalAndRecommend(A subData, n int, budget *int) {
 		}
 	}
 	fmt.Println()
-	fmt.Print("                Tekan Enter...")
-	fmt.Scanln()
+	fmt.Print("                Ketik angka/huruf bebas + Enter untuk kembali ke menu: ")
+	fmt.Scan(&wait)
 }
 
 func initDummy(A *subData, n *int) {
