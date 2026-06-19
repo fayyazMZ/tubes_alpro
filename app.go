@@ -42,8 +42,8 @@ func cls() {
 func header() {
 	fmt.Println()
 	fmt.Println("                ╔══════════════════════════════════════════════════════════════════════════╗")
-	fmt.Println("                ║                        ▶▶  S u b s c r i b e W i s e  ◀◀                  ║")
-	fmt.Println("                ║                      💡 Kelola langganan, hemat pengeluaran               ║")
+	fmt.Println("                ║                        ▶▶  S u b s c r i b e W i s e  ◀◀                 ║")
+	fmt.Println("                ║                      💡 Kelola langganan, hemat pengeluaran              ║")
 	fmt.Println("                ╚══════════════════════════════════════════════════════════════════════════╝")
 	fmt.Println()
 }
@@ -53,7 +53,7 @@ func mainMenu(choice *int, counter *int) {
 	fmt.Println()
 	fmt.Println("                ┌─────────────────────────────────────────────────────────────┐")
 	fmt.Println("                │         ▶▶ Selamat Datang di SubscribeWise! ◀◀              │")
-	fmt.Println("                │              💡 Kelola langganan, hemat pengeluaran           │")
+	fmt.Println("                │              💡 Kelola langganan, hemat pengeluaran         │")
 	fmt.Println("                ├─────────────────────────────────────────────────────────────┤")
 	fmt.Println("                │                  °❀⋆.ೃ࿔*:･   MAIN MENU   °❀⋆.ೃ࿔*:･          │")
 	fmt.Println("                └─────────────────────────────────────────────────────────────┘")
@@ -73,20 +73,21 @@ func displaySubs(A subData, n int, status *string) {
 	cls()
 	header()
 	if n != 0 {
-		fmt.Println("┌────┬────────────────────────────┬──────────────┬────────────┬──────────────┬─────────────────────┬──────────────┐")
-		fmt.Println("│ No │ Nama Layanan               │ Kategori     │ Biaya      │ Metode       │ Jatuh Tempo         │ Status       │")
-		fmt.Println("├────┼────────────────────────────┼──────────────┼────────────┼──────────────┼─────────────────────┼──────────────┤")
+		// Lebar kolom sudah disesuaikan agar tidak mencong
+		fmt.Println("┌────┬────────────────────────────┬────────────────┬────────────────┬────────────────────┬──────────────┬────────────┐")
+		fmt.Println("│ No │ Nama Layanan               │ Kategori       │ Biaya          │ Metode Pembayaran  │ Jatuh Tempo  │ Status     │")
+		fmt.Println("├────┼────────────────────────────┼────────────────┼────────────────┼────────────────────┼──────────────┼────────────┤")
 		for i := 0; i < n; i++ {
 			A[i].no = i + 1
-			fmt.Printf("│ %-2d │ %-26s │ %-12s │ Rp%-8d│ %-12s │ %02d/%02d/%04d           │ %-12s │\n",
+			fmt.Printf("│ %-2d │ %-26s │ %-14s │ Rp %-11d │ %-18s │ %02d/%02d/%04d   │ %-10s │\n",
 				A[i].no, A[i].name, A[i].category, A[i].cost, A[i].method,
 				A[i].dueDate.day, A[i].dueDate.month, A[i].dueDate.year, A[i].status)
 		}
-		fmt.Println("└────┴────────────────────────────┴──────────────┴────────────┴──────────────┴─────────────────────┴──────────────┘")
+		fmt.Println("└────┴────────────────────────────┴────────────────┴────────────────┴────────────────────┴──────────────┴────────────┘")
 	} else {
-		fmt.Println("┌──────────────────────────────────────────────────────────────────────────────────────────────────────────┐")
-		fmt.Println("│                               ⌕  Belum ada langganan                                                     │")
-		fmt.Println("└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘")
+		fmt.Println("┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐")
+		fmt.Println("│                                              ⌕  Belum ada langganan                                                │")
+		fmt.Println("└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘")
 	}
 	fmt.Println()
 	if *status != "" {
@@ -153,7 +154,6 @@ func addSubscription(A *subData, n *int, status *string) {
 		*n = i
 		*status = "Langganan berhasil ditambahkan!"
 	}
-	// Bersihkan buffer enter sisa input data terakhir
 	fmt.Scanln(&dummy)
 }
 
@@ -307,9 +307,9 @@ func searchMenu(A *subData, n *int, status *string) {
 		if idx != -1 {
 			cls()
 			header()
-			fmt.Println("┌──────────────────────────────────────────────────────────────────────────────────────────────────────────┐")
-			fmt.Printf("│               ✅ Ditemukan: %-26s (Rp%-8d/bulan)                                      │\n", sorted[idx].name, sorted[idx].cost)
-			fmt.Println("└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘")
+			fmt.Println("┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐")
+			fmt.Printf("│               ✅ Ditemukan: %-26s (Rp%-11d/bulan)                                   │\n", sorted[idx].name, sorted[idx].cost)
+			fmt.Println("└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘")
 			fmt.Println()
 			fmt.Print("                Ketik angka/huruf bebas + Enter untuk kembali ke menu: ")
 			fmt.Scan(&wait)
@@ -384,7 +384,7 @@ func remindDue(A subData, n int) {
 	cls()
 	fmt.Println()
 	fmt.Println("                ╔══════════════════════════════════════════════════════════════╗")
-	fmt.Println("                ║                ⏰ PENGINGAT JATUH TEMPO (7 HARI)              ║")
+	fmt.Println("                ║                ⏰ PENGINGAT JATUH TEMPO (7 HARI)             ║")
 	fmt.Println("                ╚══════════════════════════════════════════════════════════════╝")
 	fmt.Println()
 	found := false
@@ -418,7 +418,7 @@ func totalAndRecommend(A subData, n int, budget *int) {
 	cls()
 	fmt.Println()
 	fmt.Println("                ╔══════════════════════════════════════════════════════════════╗")
-	fmt.Println("                ║                💰 TOTAL PENGELUARAN & REKOMENDASI             ║")
+	fmt.Println("                ║                💰 TOTAL PENGELUARAN & REKOMENDASI            ║")
 	fmt.Println("                ╚══════════════════════════════════════════════════════════════╝")
 	fmt.Println()
 	fmt.Printf("                Total pengeluaran aktif: Rp%d/bulan\n", total)
@@ -462,7 +462,7 @@ func totalAndRecommend(A subData, n int, budget *int) {
 func initDummy(A *subData, n *int) {
 	i := 0
 	A[i] = subscription{id: 1, no: 1, name: "Netflix", category: "Hiburan", cost: 89000, method: "Kartu Kredit", status: "Active",
-		dueDate: dueDate{day: 10, month: 6, year: 2026, converted: dateToDays(dueDate{day: 10, month: 6, year: 2026})}}
+		dueDate: dueDate{day: 20, month: 6, year: 2026, converted: dateToDays(dueDate{day: 20, month: 6, year: 2026})}}
 	i++
 	A[i] = subscription{id: 2, no: 2, name: "Spotify", category: "Musik", cost: 54000, method: "GoPay", status: "Active",
 		dueDate: dueDate{day: 5, month: 6, year: 2026, converted: dateToDays(dueDate{day: 5, month: 6, year: 2026})}}
@@ -471,10 +471,13 @@ func initDummy(A *subData, n *int) {
 		dueDate: dueDate{day: 16, month: 6, year: 2026, converted: dateToDays(dueDate{day: 16, month: 6, year: 2026})}}
 	i++
 	A[i] = subscription{id: 4, no: 4, name: "YouTube Premium", category: "Hiburan", cost: 69000, method: "Dana", status: "Active",
-		dueDate: dueDate{day: 7, month: 6, year: 2026, converted: dateToDays(dueDate{day: 7, month: 6, year: 2026})}}
+		dueDate: dueDate{day: 10, month: 7, year: 2026, converted: dateToDays(dueDate{day: 10, month: 7, year: 2026})}}
 	i++
-	A[i] = subscription{id: 5, no: 5, name: "AWS Cloud", category: "Produktivitas", cost: 150000, method: "Transfer", status: "Active",
+	A[i] = subscription{id: 5, no: 5, name: "AWS", category: "Produktivitas", cost: 150000, method: "Transfer Bank", status: "Active",
 		dueDate: dueDate{day: 1, month: 6, year: 2026, converted: dateToDays(dueDate{day: 1, month: 6, year: 2026})}}
+	i++
+	A[i] = subscription{id: 6, no: 6, name: "ChatGPT", category: "Produktivitas", cost: 320000, method: "OVO", status: "Active",
+		dueDate: dueDate{day: 25, month: 6, year: 2026, converted: dateToDays(dueDate{day: 25, month: 6, year: 2026})}}
 	*n = i + 1
 }
 
